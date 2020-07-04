@@ -1,0 +1,94 @@
+% % Using Euler's method to integrate the ODE
+
+close all
+clear all
+B = 1;
+gamma = 1;
+del = 0.2;
+lo = 4;
+p = 4;
+sigma = 1;
+lext = 2.5;
+ 
+dt    = 0.01;  
+tlast = 20; % s
+lext = 1:7;
+iterations = round(tlast/dt) ; 
+lall = zeros(iterations,length(lext)) ;
+LacYall = zeros(iterations,length(lext));
+
+Lac_SS1 = zeros(length(lext),1);
+
+time = dt*(0:iterations-1)';
+figure
+handle1 = gcf ;
+subplot(1,2,1)
+hold on
+
+for lind = 1:length(lext)
+    l = 8;
+    LacY = 3;
+ for i = 1:iterations 
+  lall(i,lind) = l;
+  LacYall(i,lind) = LacY;
+  dldt = B*lext(lind)*LacY - gamma*l ;
+  dLdt = del - sigma*LacY + p*((l.^4)./(l.^4+4^4)) ;
+  l = l + dldt*dt ;
+  LacY = LacY + dLdt*dt;
+ end % of this time step
+ figure(handle1)
+ plot(time, LacYall, 'b')
+ hold on
+ plot(time, lall, 'r')
+ Lac_SS1(lind) = LacYall(iterations,lind);
+end
+figure(handle1)
+ylabel('concentration')
+xlabel('time')
+LacYall(1,1)
+
+
+figure
+handle2 = gcf;
+plot(lext,Lac_SS1','o')
+hold on
+
+%for the second set of initial conditions
+lext = 1:7;
+iterations = round(tlast/dt) ; 
+lall = zeros(iterations,length(lext)) ;
+LacYall = zeros(iterations,length(lext));
+
+Lac_SS2 = zeros(length(lext),1);
+
+time = dt*(0:iterations-1)';
+figure(handle1)
+subplot(1,2,2)
+hold on
+%running the outer loop for each value of lext,
+%for the same initial conditions of l and LacY
+for lind = 1:length(lext)
+    l = 2;
+    LacY = 1;
+ for i = 1:iterations 
+  lall(i,lind) = l;
+  LacYall(i,lind) = LacY;
+  dldt = B*lext(lind)*LacY - gamma*l ;
+  dLdt = del - sigma*LacY + p*((l.^4)./(l.^4+4^4)) ;
+  l = l + dldt*dt ;
+  LacY = LacY + dLdt*dt;
+ end % of this time step
+ figure(handle1)
+ plot(time, LacYall, 'b')
+ hold on
+ plot(time, lall, 'r')
+ Lac_SS2(lind) = LacYall(iterations,lind); %the final data in the LacYall array 
+ %is practically the ss value
+end
+figure(handle1)
+ylabel('concentration')
+xlabel('time')
+LacYall(1,1)
+figure(handle2)
+plot(lext,Lac_SS2','o')
+legend('condition 1', 'condition 2')
