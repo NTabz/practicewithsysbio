@@ -1,0 +1,144 @@
+% % Rate-balance plots for single-variable biological systems
+
+% % 
+% % 1) Linear system with no feedback, forward rate depends on [S]
+% % 
+% Astar = 0:0.001:1 ;
+% S = 0.5:0.5:20 ;
+% kplus = 2 ;
+% kminus = 5 ;
+% 
+% BR = kminus*Astar ;
+% figure
+% hold on 
+% plot(Astar,BR,'r','LineWidth',2)
+% set(gca,'TickDir','Out')
+% xlabel('[A*]/[A]')
+% ylabel('Rates')
+% 
+% for i=1:length(S)
+%   FR = kplus*S(i)*(1-Astar) ;
+%   [minpos,dex] = min(abs(FR - BR)) ; %this form of output
+%   %returns an array with minpos giving the value 
+%   %and dex returning the index of the value in FR that gives the min result
+%   A_SS(i) = Astar(dex) ;
+%   plot(Astar,FR,'b','LineWidth',2)
+% end
+% axis([0 1 0 max(FR)])
+% 
+% figure
+% plot(S,A_SS,'bo-','LineWidth',2)
+% set(gca,'TickDir','Out')
+% xlabel('Stimulus [S]')
+% ylabel('Steady-state [A*]/[A]')
+
+% % Rate-balance plots
+% % 
+% % 2) Linear feedback, saturated back reaction variable [S]
+% % 
+close all
+clear all
+Astar = 0:0.01:1 ;
+S = 0:0.1:4 ;
+kplus = 2 ;
+kfs = 30 ;
+Kmf = 0.5 ;
+kminus = 5 ;
+h = 4 ; % exponent
+Kmb = 1 ;
+BR = kminus*(Astar./(Astar+Kmb)) ;
+figure
+handle1 = gcf ;
+hold on 
+plot(Astar,BR,'r','LineWidth',2)
+set(gca,'TickDir','Out')
+
+figure
+handle2 = gcf ;
+hold on
+
+for i=1:length(S)
+  FR = (kplus*S(i)+kfs*(Astar)).*(1-Astar);
+  figure(handle1)
+  plot(Astar,FR,'b','LineWidth',2)
+  %drawing the bifurcation diagram
+  crossings = [] ; %
+  difference = FR-BR ;
+  for iii=2:length(FR) %sign extracts the sign of a real number
+    if (sign(difference(iii)) ~= sign(difference(iii-1)))%several SS, so min function won't help.
+        %we find a value which is preceded by a value of the oppsite sign
+        %this means we've crossed the SS
+      crossings = [crossings,iii] ;
+    end
+  end
+  figure(handle2)
+  plot(S(i),Astar(crossings),'bo')
+  
+end
+figure(handle1)
+axis([0 1 0 max(FR)])
+set(gca,'TickDir','Out')
+xlabel('[A*]/[A]')
+ylabel('Rates')
+
+figure(handle2)
+set(gca,'TickDir','Out')
+xlabel('Stimulus [S]')
+ylabel('Steady-state [A*]/[A]')
+
+
+
+
+% % 
+% % % % Rate-balance plots
+% % % % 
+% % % % 2) Ultrasensitive feedback, saturated back reaction variable [S]
+% % % % 
+% % 
+Astar = 0:0.01:1 ;
+S = 0:0.1:4 ;
+kplus = 0.5 ;
+kfs = 30 ;
+Kmf = 0.5 ;
+kminus = 5 ;
+h = 4 ; % exponent
+Kmb = 0.5 ;
+BR = kminus*(Astar./(Astar+Kmb)) ;
+figure
+handle1 = gcf ;
+hold on 
+plot(Astar,BR,'r','LineWidth',2)
+set(gca,'TickDir','Out')
+
+figure
+handle2 = gcf ;
+hold on
+
+for i=1:length(S)
+  FR = (kplus*S(i)+kfs*(Astar.^h./(Astar.^h+Kmf^h))).*(1-Astar) ;
+  figure(handle1)
+  plot(Astar,FR,'b','LineWidth',2)
+  %drawing the bifurcation diagram
+  crossings = [] ; %
+  difference = FR-BR ;
+  for iii=2:length(FR) %sign extracts the sign of a real number
+    if (sign(difference(iii)) ~= sign(difference(iii-1)))%several SS, so min function won't help.
+        %we find a value which is preceded by a value of the oppsite sign
+        %this means we've crossed the SS
+      crossings = [crossings,iii] ;
+    end
+  end
+  figure(handle2)
+  plot(S(i),Astar(crossings),'bo')
+  
+end
+figure(handle1)
+axis([0 1 0 max(FR)])
+set(gca,'TickDir','Out')
+xlabel('[A*]/[A]')
+ylabel('Rates')
+
+figure(handle2)
+set(gca,'TickDir','Out')
+xlabel('Stimulus [S]')
+ylabel('Steady-state [A*]/[A]')
