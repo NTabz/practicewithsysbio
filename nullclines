@@ -1,0 +1,21 @@
+% plotting nullclines of a two-variable model of the E.coli lac operon
+% nullcline Dl/dt = 0
+
+B = 1;
+gamma = 1;
+del = 0.2;
+lo = 4;
+p = 4;
+sigma = 1;
+lext = 2.5;
+
+l = 0:0.05:15 ;
+f = l.*sigma/(B*lext);
+g = (del + p*((l.^4)./(l.^4+4^4)))./sigma;
+figure
+hold on 
+plot(l,f,'r','LineWidth',2)
+% set(gca,'TickDir','Out')
+plot(l,g,'b','LineWidth',2)
+xlabel('l')
+ylabel('LacY')
